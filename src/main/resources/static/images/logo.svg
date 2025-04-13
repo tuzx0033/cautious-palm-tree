@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="60" viewBox="0 0 200 60">
+    <defs>
+      <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#1db954;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#4dc3ff;stop-opacity:1" />
+      </linearGradient>
+    </defs>
+    <!-- Background shape for text -->
+    <rect width="200" height="60" rx="10" fill="none" />
+    
+    <!-- Music note icon -->
+    <g transform="translate(10, 10) scale(0.9)">
+      <path d="M25,5 A20,20 0 1 0 25,45 A20,20 0 1 0 25,5 Z" fill="url(#logo-gradient)" opacity="0.9" />
+      <path d="M25,15 L25,35 C23,33 20,33 17,35 C13,38 13,43 17,45 C21,47 25,45 25,40 L25,20 L35,17 L35,32 C33,30 30,30 27,32 C23,35 23,40 27,42 C31,44 35,42 35,37 L35,12 Z" fill="white" />
+    </g>
+    
+    <!-- Text "Music App" -->
+    <text x="60" y="35" font-family="Arial" font-size="24" font-weight="bold" fill="url(#logo-gradient)">Music App</text>
+  </svg>

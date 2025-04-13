@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Danh Sách Phát - Music App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #121212;
+            font-family: 'Arial', sans-serif;
+        }
+        .album-card:hover {
+            background-color: #282828;
+        }
+        .create-playlist-section {
+            transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        .create-playlist-section.active {
+            max-height: 500px;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-[#121212] text-white min-h-screen">
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside class="fixed top-0 left-0 h-full w-64 p-4 flex flex-col bg-[#000]">
+            <div class="logo mb-6">
+                <img th:src="@{/img/logo.png}" alt="Music App Logo" class="w-32">
+            </div>
+            <nav class="space-y-2">
+                <a th:href="@{/api/projects/music}" class="flex items-center text-gray-400 hover:text-[#1db954] font-semibold"><i class="fas fa-home mr-3"></i> Trang chủ</a>
+                <a href="#" class="flex items-center text-gray-400 hover:text-[#1db954] font-semibold"><i class="fas fa-search mr-3"></i> Tìm kiếm</a>
+                <a th:href="@{/api/playlists}" class="flex items-center text-[#1db954] font-semibold"><i class="fas fa-list-ul mr-3"></i> Danh sách phát</a>
+                <a th:href="@{/recommendations}" class="flex items-center text-gray-400 hover:text-[#1db954] font-semibold"><i class="fas fa-lightbulb mr-3"></i> Gợi Ý</a>
+                <a href="#" class="flex items-center text-gray-400 hover:text-[#1db954] font-semibold"><i class="fas fa-book mr-3"></i> Thư viện</a>
+            </nav>
+            <div class="playlists mt-8 flex-1">
+                <h3 class="text-sm font-bold text-gray-500 uppercase mb-2">Playlists</h3>
+                <ul class="space-y-1 text-sm text-gray-400">
+                    <li th:each="playlist : ${playlists}">
+                        <a th:href="@{/api/playlists/{id}(id=${playlist.id})}" th:text="${playlist.name}" class="hover:text-[#1db954]"></a>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6 ml-64">
+            <header class="flex justify-between items-center mb-6">
+                <div class="search-bar bg-[#282828] rounded-full flex items-center w-1/2 max-w-md">
+                    <form method="POST" th:action="@{/api/projects/search}" class="flex items-center w-full">
+                        <i class="fas fa-search text-gray-500 ml-4"></i>
+                        <input type="text" name="keyword" th:value="${keyword}" placeholder="Tìm kiếm bài hát, nghệ sĩ hoặc thể loại" class="bg-transparent border-none text-white placeholder-gray-500 outline-none py-2 px-4 w-full" />
+                        <input type="hidden" name="page" value="0" />
+                        <input type="hidden" name="sourcePage" value="playlists" />
+                        <button type="submit" class="hidden">Search</button>
+                    </form>
+                </div>
+                <button onclick="toggleCreatePlaylistForm()" class="bg-[#1db954] text-black font-semibold py-2 px-4 rounded-full hover:bg-[#1ed760]"><i class="fas fa-plus mr-2"></i> Tạo Playlist</button>
+            </header>
+
+            <!-- Create Playlist Section -->
+            <section class="create-playlist-section bg-[#181818] p-4 rounded-lg mb-6" id="createPlaylistForm">
+                <h3 class="text-xl font-semibold mb-4">Tạo Playlist Mới</h3>
+                <form method="POST" th:action="@{/api/playlists/create}" enctype="multipart/form-data" class="space-y-4">
+                    <div>
+                        <label for="name" class="block text-gray-400 text-sm">Tên Playlist:</label>
+                        <input type="text" name="name" id="name" required class="w-full p-2 bg-[#282828] rounded text-white text-sm" />
+                    </div>
+                    <div>
+                        <label for="thumbnail" class="block text-gray-400 text-sm">Ảnh Playlist:</label>
+                        <input type="file" name="thumbnail" id="thumbnail" accept="image/jpeg,image/png" class="w-full p-2 bg-[#282828] rounded text-white text-sm" />
+                    </div>
+                    <input type="hidden" name="page" th:value="${currentPage}" />
+                    <button type="submit" class="bg-[#1db954] text-black font-semibold py-2 px-4 rounded hover:bg-[#1ed760] text-sm">Tạo</button>
+                </form>
+            </section>
+
+            <!-- Message -->
+            <p th:if="${message}" th:text="${message}" class="mb-4 text-gray-400 text-center"></p>
+
+            <!-- Playlist List -->
+            <section>
+                <h2 class="text-2xl font-bold mb-4">Danh Sách Phát Của Bạn</h2>
+                <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                    <div class="album-card bg-[#181818] rounded-lg overflow-hidden" th:each="playlist : ${playlists}">
+                        <a th:href="@{/api/playlists/{id}(id=${playlist.id})}" class="block">
+                            <div class="relative">
+                                <img th:if="${playlist.thumbnailUrl != null}" th:src="${playlist.thumbnailUrl}" alt="Playlist Cover" class="w-full aspect-square object-cover" loading="lazy">
+                                <img th:unless="${playlist.thumbnailUrl != null}" th:src="@{/img/album_placeholder.png}" alt="Playlist Cover" class="w-full aspect-square object-cover">
+                            </div>
+                            <div class="p-4">
+                                <p class="text-sm font-semibold truncate" th:text="${playlist.name}"></p>
+                                <p class="text-xs text-gray-400" th:text="'${#lists.size(playlist.songs)} bài hát'"></p>
+                            </div>
+                        </a>
+                        <div class="p-4 pt-0">
+                            <form method="POST" th:action="@{/api/playlists/delete}" onsubmit="return confirmDelete(this)">
+                                <input type="hidden" name="playlistId" th:value="${playlist.id}" />
+                                <input type="hidden" name="page" th:value="${currentPage}" />
+                                <input type="hidden" th:value="${playlist.name}" th:attr="data-playlist-name=${playlist.name}" />
+                                <button type="submit" class="bg-red-500 text-white rounded py-1 px-2 text-xs w-full hover:bg-red-600">Xóa Playlist</button>
+                            </form>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 text-center col-span-full mt-8" th:if="${playlists == null or #lists.isEmpty(playlists)}">Chưa có playlist nào.</p>
+                </div>
+
+                <!-- Pagination -->
+                <div class="flex justify-center gap-4 mt-6" th:if="${totalPages > 1}">
+                    <form method="GET" th:action="@{/api/playlists}">
+                        <input type="hidden" name="page" th:value="${currentPage - 1}" />
+                        <button type="submit" th:disabled="${currentPage <= 0}" class="bg-gray-600 text-white py-2 px-4 rounded disabled:opacity-50 hover:bg-gray-500">Trước</button>
+                    </form>
+                    <span th:text="'Trang ' + ${currentPage + 1} + ' / ' + ${totalPages}" class="text-gray-400 self-center"></span>
+                    <form method="GET" th:action="@{/api/playlists}">
+                        <input type="hidden" name="page" th:value="${currentPage + 1}" />
+                        <button type="submit" th:disabled="${currentPage >= totalPages - 1}" class="bg-gray-600 text-white py-2 px-4 rounded disabled:opacity-50 hover:bg-gray-500">Tiếp</button>
+                    </form>
+                </div>
+            </section>
+        </main>
+
+        <!-- Player Bar -->
+        <footer class="fixed bottom-0 left-0 w-full h-20 bg-[#282828] flex items-center justify-between px-6">
+            <div class="flex items-center w-1/4">
+                <img id="current-song-thumbnail" th:src="@{/img/default_album.png}" alt="Current Track" class="w-12 h-12 rounded hidden">
+                <div class="ml-4">
+                    <p id="current-song" class="text-sm font-semibold truncate">Không có bài hát nào</p>
+                </div>
+            </div>
+            <div class="flex flex-col items-center w-1/2">
+                <div class="flex gap-6">
+                    <button class="text-gray-400 hover:text-white"><i class="fas fa-random"></i></button>
+                    <button id="prev-btn" class="text-white"><i class="fas fa-step-backward"></i></button>
+                    <button id="play-pause-btn" class="text-white text-2xl"><i class="fas fa-play"></i></button>
+                    <button id="next-btn" class="text-white"><i class="fas fa-step-forward"></i></button>
+                    <button class="text-gray-400 hover:text-white"><i class="fas fa-redo"></i></button>
+                </div>
+                <div class="flex items-center w-full mt-2">
+                    <span id="current-time" class="text-xs text-gray-400 mr-2">0:00</span>
+                    <input type="range" id="time-slider" value="0" min="0" max="100" class="w-full accent-[#1db954]">
+                    <span id="duration" class="text-xs text-gray-400 ml-2">0:00</span>
+                </div>
+            </div>
+            <div class="flex items-center w-1/4 justify-end">
+                <i class="fas fa-volume-up text-gray-400 mr-2"></i>
+                <input type="range" id="volume-slider" value="1" min="0" max="1" step="0.01" class="w-24 accent-[#1db954]">
+            </div>
+            <audio id="player-audio" style="display: none;"></audio>
+        </footer>
+    </div>
+
+    <script th:src="@{/script.js}"></script>
+    <script>
+        function toggleCreatePlaylistForm() {
+            document.getElementById('createPlaylistForm').classList.toggle('active');
+        }
+        function confirmDelete(form) {
+            const playlistName = form.querySelector('input[data-playlist-name]').dataset.playlistName;
+            return confirm(`Bạn có chắc muốn xóa danh sách phát "${playlistName}"?`);
+        }
+    </script>
+</body>
+</html>

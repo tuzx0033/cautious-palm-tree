@@ -1,0 +1,31 @@
+body {
+    background-color: #121212;
+    color: #fff;
+    font-family: 'Arial', sans-serif;
+}
+.sidebar {
+    background-color: #000;
+}
+.main-content {
+    background-color: #181818;
+}
+.player-bar {
+    background-color: #282828;
+}
+.song-table tr:hover {
+    background-color: #333;
+}
+.btn:hover {
+    background-color: #1db954;
+}
+audio::-webkit-media-controls-panel {
+    background-color: #333;
+    color: #fff;
+}
+.edit-form {
+    display: none;
+}
+.edit-form.active {
+    display: flex;
+    gap: 8px;
+}

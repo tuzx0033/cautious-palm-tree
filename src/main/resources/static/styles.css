@@ -1,0 +1,52 @@
+body {
+    background-color: #121212;
+    color: #fff;
+    font-family: 'Arial', sans-serif;
+}
+.sidebar {
+    background-color: #000;
+}
+.main-content {
+    background-color: #181818;
+}
+.player-bar {
+    background-color: #282828;
+}
+.song-table tr:hover {
+    background-color: #333;
+}
+.btn:hover {
+    background-color: #1db954;
+}
+audio::-webkit-media-controls-panel {
+    background-color: #333;
+    color: #fff;
+}
+.edit-form {
+    display: none;
+}
+.edit-form.active {
+    display: flex;
+    gap: 8px;
+}
+.player-bar .player-controls button {
+    background-color: #282828; /* Màu nền đồng bộ với player-bar */
+    border: none;
+    border-radius: 50%; /* Làm nút tròn */
+    width: 40px; /* Kích thước cố định */
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+.player-bar .player-controls button:hover {
+    background-color: #1db954; /* Màu hover giống các nút khác */
+}
+.player-bar .player-controls button i {
+    font-size: 18px; /* Kích thước icon */
+    color: #fff; /* Màu icon */
+}
+#play-pause-btn {
+    padding: 0; /* Xóa padding mặc định để icon căn giữa */
+}
