@@ -30,5 +30,5 @@ Music App là một ứng dụng web quản lý và phát nhạc được xây d
 2. Cấu hình `application.properties` với Supabase và PostgreSQL.
 3. Chạy: `mvn spring-boot:run`
 4. Truy cập: `http://localhost:8080/api/projects/music`
-5. link website: https://cautious-palm-tree-1diw.onrender.com/api/projects/music
+5. link website: https://cautious-palm-tree-1diw.onrender.com/api/projects/music Render bản free nên load hơi lâu ạ :̣̣((
 
